@@ -1,0 +1,33 @@
+{
+	"schemaVersion": 1,
+	"id": "httpinfoserver",
+	"version": "${version}",
+	"name": "HttpInfoServer",
+	"description": "Data collector (agent) for HTTP API server",
+	"authors": [
+		"Crocoby"
+	],
+	"contact": {
+		"sources": "https://github.com/dadencukillia/httpInfoServer-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/httpinfoserver/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"main": [
+			"com.crocoby.HttpInfoServer"
+		]
+	},
+	"mixins": [
+		"httpinfoserver.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.15.9",
+		"minecraft": "~1.20.4",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
