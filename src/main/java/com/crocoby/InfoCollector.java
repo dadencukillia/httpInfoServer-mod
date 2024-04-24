@@ -71,7 +71,7 @@ public class InfoCollector {
 
                 playersData.add(playerData);
             }
-            worldData.put("players", playersData);
+            jsonData.put("players", playersData);
 
             // Data about entities in the world
             ArrayList<HashMap<String, Object>> entitiesData = new ArrayList<>();
@@ -89,7 +89,7 @@ public class InfoCollector {
 
                 entitiesData.add(entityData);
             }
-            worldData.put("entities", entitiesData);
+            jsonData.put("entities", entitiesData);
 
             // Data about server
             ServerInfo server = MinecraftClient.getInstance().getCurrentServerEntry();
