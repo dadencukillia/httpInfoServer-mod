@@ -52,8 +52,8 @@ public class InfoCollector {
             worldData.put("time", world.getTime());
             Identifier world_regkey = world.getRegistryKey().getValue();
             worldData.put("type", world_regkey.equals(DimensionTypes.OVERWORLD_ID)?"overworld":(
-                            world_regkey.equals(DimensionTypes.THE_END_ID)?"theEnd":(
-                                    world_regkey.equals(DimensionTypes.THE_NETHER_ID)?"theNether":"custom"
+                    world_regkey.equals(DimensionTypes.THE_END_ID)?"theEnd":(
+                            world_regkey.equals(DimensionTypes.THE_NETHER_ID)?"theNether":"custom"
                             )
                     )
             );
