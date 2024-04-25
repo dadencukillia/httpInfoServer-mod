@@ -6,6 +6,7 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.dimension.DimensionTypes;
@@ -29,9 +30,17 @@ public class InfoCollector {
 
         jsonData.put("nickname", MinecraftClient.getInstance().getGameProfile().getName());
         jsonData.put("UUID", MinecraftClient.getInstance().getGameProfile().getId().toString());
+        MinecraftClient client = MinecraftClient.getInstance();
+        ClientWorld world = client.world;
 
-        ClientWorld world = MinecraftClient.getInstance().world;
+        IntegratedServer worldServer = client.getServer();
+        String worldName = null;
+        if (world != null && worldServer != null) {
+            worldName = worldServer.getServerMetadata().description().getLiteralString().split("-")[1];
+            System.out.println(worldName);
+        }
 
+        jsonData.put("worldName", worldName);
         jsonData.put("isInWorld", world!=null);
 
         // Data about world player in
@@ -41,11 +50,12 @@ public class InfoCollector {
             worldData.put("isDay", world.isDay());
             worldData.put("weather", world.isRaining()?"rain":(world.isThundering()?"thunder":"clear"));
             worldData.put("timeOfDay", world.getTimeOfDay());
+            worldData.put("difficulty", world.getDifficulty());
             worldData.put("time", world.getTime());
             Identifier world_regkey = world.getRegistryKey().getValue();
             worldData.put("type", world_regkey.equals(DimensionTypes.OVERWORLD_ID)?"overworld":(
-                    world_regkey.equals(DimensionTypes.THE_END_ID)?"theEnd":(
-                                world_regkey.equals(DimensionTypes.THE_NETHER_ID)?"theNether":"custom"
+                            world_regkey.equals(DimensionTypes.THE_END_ID)?"theEnd":(
+                                    world_regkey.equals(DimensionTypes.THE_NETHER_ID)?"theNether":"custom"
                             )
                     )
             );
