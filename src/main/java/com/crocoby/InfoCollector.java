@@ -6,10 +6,12 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
+import net.minecraft.server.ServerMetadata;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.dimension.DimensionTypes;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,19 +35,16 @@ public class InfoCollector {
         MinecraftClient client = MinecraftClient.getInstance();
         ClientWorld world = client.world;
 
-        IntegratedServer worldServer = client.getServer();
-        String worldName = null;
-        if (world != null && worldServer != null) {
-            worldName = worldServer.getServerMetadata().description().getLiteralString().split("-")[1];
-            System.out.println(worldName);
-        }
-
-        jsonData.put("worldName", worldName);
         jsonData.put("isInWorld", world!=null);
 
         // Data about world player in
         if (world != null) {
             HashMap<String, Object> worldData = new HashMap<>();
+
+            // Determine name of world player is logged into
+            String[] worldName = getWorldName(client);
+
+            jsonData.put("worldName", worldName);
 
             worldData.put("isDay", world.isDay());
             worldData.put("weather", world.isRaining()?"rain":(world.isThundering()?"thunder":"clear"));
@@ -122,6 +121,22 @@ public class InfoCollector {
 
         // Converting map to JSON string
         return new Gson().toJson(jsonData);
+    }
+
+    // For a given player determine the name of the world they are logged in to
+    private static String @Nullable [] getWorldName(MinecraftClient client) {
+        IntegratedServer worldServer = client.getServer();
+        String[] worldName = null;
+        if (worldServer != null) {
+            ServerMetadata metadata = worldServer.getServerMetadata();
+            if (metadata != null) {
+                String description = metadata.description().getLiteralString();
+                if (description != null) {
+                    worldName = description.split("-");
+                }
+            }
+        }
+        return worldName;
     }
 
     public InfoCollector() {}
