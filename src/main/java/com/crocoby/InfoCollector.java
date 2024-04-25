@@ -43,7 +43,6 @@ public class InfoCollector {
 
             // Determine name of world player is logged into
             String[] worldName = getWorldName(client);
-
             jsonData.put("worldName", worldName);
 
             worldData.put("isDay", world.isDay());
