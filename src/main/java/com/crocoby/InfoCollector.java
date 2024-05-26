@@ -43,7 +43,7 @@ public class InfoCollector {
 
             // Determine name of world player is logged into
             String[] worldName = getWorldName(client);
-            jsonData.put("worldName", worldName);
+            worldData.put("worldName", worldName);
 
             worldData.put("isDay", world.isDay());
             worldData.put("weather", world.isRaining()?"rain":(world.isThundering()?"thunder":"clear"));
@@ -51,9 +51,7 @@ public class InfoCollector {
             worldData.put("difficulty", world.getDifficulty());
             worldData.put("time", world.getTime());
             Identifier world_regkey = world.getRegistryKey().getValue();
-            worldData.put("type", world_regkey.equals(DimensionTypes.OVERWORLD_ID)?"overworld":(
-                    world_regkey.equals(DimensionTypes.THE_END_ID)?"theEnd":(
-                            world_regkey.equals(DimensionTypes.THE_NETHER_ID)?"theNether":"custom"
+            worldData.put("type", world_regkey.equals(DimensionTypes.OVERWORLD_ID)?"overworld":(world_regkey.equals(DimensionTypes.THE_END_ID)?"theEnd":(world_regkey.equals(DimensionTypes.THE_NETHER_ID)?"theNether":"custom"
                             )
                     )
             );
