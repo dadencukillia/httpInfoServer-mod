@@ -48,7 +48,7 @@ public class InfoCollector {
             worldData.put("isDay", world.isDay());
             worldData.put("weather", world.isRaining()?"rain":(world.isThundering()?"thunder":"clear"));
             worldData.put("timeOfDay", world.getTimeOfDay());
-            worldData.put("difficulty", world.getDifficulty());
+            worldData.put("difficulty", world.getDifficulty().toString().toLowerCase());
             worldData.put("time", world.getTime());
             Identifier world_regkey = world.getRegistryKey().getValue();
             worldData.put("type",
