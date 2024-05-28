@@ -6,9 +6,12 @@ import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
+import net.minecraft.server.ServerMetadata;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.dimension.DimensionTypes;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,8 +32,8 @@ public class InfoCollector {
 
         jsonData.put("nickname", MinecraftClient.getInstance().getGameProfile().getName());
         jsonData.put("UUID", MinecraftClient.getInstance().getGameProfile().getId().toString());
-
-        ClientWorld world = MinecraftClient.getInstance().world;
+        MinecraftClient client = MinecraftClient.getInstance();
+        ClientWorld world = client.world;
 
         jsonData.put("isInWorld", world!=null);
 
@@ -38,14 +41,17 @@ public class InfoCollector {
         if (world != null) {
             HashMap<String, Object> worldData = new HashMap<>();
 
+            // Determine name of world player is logged into
+            String[] worldName = getWorldName(client);
+            worldData.put("worldName", worldName);
+
             worldData.put("isDay", world.isDay());
             worldData.put("weather", world.isRaining()?"rain":(world.isThundering()?"thunder":"clear"));
             worldData.put("timeOfDay", world.getTimeOfDay());
+            worldData.put("difficulty", world.getDifficulty());
             worldData.put("time", world.getTime());
             Identifier world_regkey = world.getRegistryKey().getValue();
-            worldData.put("type", world_regkey.equals(DimensionTypes.OVERWORLD_ID)?"overworld":(
-                    world_regkey.equals(DimensionTypes.THE_END_ID)?"theEnd":(
-                                world_regkey.equals(DimensionTypes.THE_NETHER_ID)?"theNether":"custom"
+            worldData.put("type", world_regkey.equals(DimensionTypes.OVERWORLD_ID)?"overworld":(world_regkey.equals(DimensionTypes.THE_END_ID)?"theEnd":(world_regkey.equals(DimensionTypes.THE_NETHER_ID)?"theNether":"custom"
                             )
                     )
             );
@@ -71,7 +77,7 @@ public class InfoCollector {
 
                 playersData.add(playerData);
             }
-            worldData.put("players", playersData);
+            jsonData.put("players", playersData);
 
             // Data about entities in the world
             ArrayList<HashMap<String, Object>> entitiesData = new ArrayList<>();
@@ -89,7 +95,7 @@ public class InfoCollector {
 
                 entitiesData.add(entityData);
             }
-            worldData.put("entities", entitiesData);
+            jsonData.put("entities", entitiesData);
 
             // Data about server
             ServerInfo server = MinecraftClient.getInstance().getCurrentServerEntry();
@@ -112,6 +118,22 @@ public class InfoCollector {
 
         // Converting map to JSON string
         return new Gson().toJson(jsonData);
+    }
+
+    // For a given player determine the name of the world they are logged in to
+    private static String @Nullable [] getWorldName(MinecraftClient client) {
+        IntegratedServer worldServer = client.getServer();
+        String[] worldName = null;
+        if (worldServer != null) {
+            ServerMetadata metadata = worldServer.getServerMetadata();
+            if (metadata != null) {
+                String description = metadata.description().getLiteralString();
+                if (description != null) {
+                    worldName = description.split("-");
+                }
+            }
+        }
+        return worldName;
     }
 
     public InfoCollector() {}
