@@ -132,7 +132,7 @@ public class InfoCollector {
             if (metadata != null) {
                 String description = metadata.description().getLiteralString();
                 if (description != null) {
-                    worldName = description.split("-");
+                    worldName = description.split(" - ");
                 }
             }
         }
